@@ -1,4 +1,5 @@
 import env from '#start/env'
+import app from '@adonisjs/core/services/app'
 import { defineConfig } from '@adonisjs/lucid'
 
 const dbConfig = defineConfig({
@@ -12,7 +13,7 @@ const dbConfig = defineConfig({
         port: env.get('DB_PORT'),
         user: env.get('DB_USER'),
         password: env.get('DB_PASSWORD'),
-        database: env.get('DB_DATABASE'),
+        database: app.inTest ? env.get('DB_DATABASE') : env.get('DB_DATABASE_TEST'),
       },
       migrations: {
         naturalSort: true,
