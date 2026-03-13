@@ -24,7 +24,7 @@ export default class ProductsController {
 
     async update({ params, request, response }: HttpContext) {
         const product = await Product.findOrFail(params.id)
-        product.merge(request.only(['name, amount']))
+        product.merge(request.only(['name', 'amount']))
         await product.save()
         return response.ok({
             message: 'Product successfully updated',
