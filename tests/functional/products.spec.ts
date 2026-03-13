@@ -33,7 +33,7 @@ test.group('Products', (group) => {
             .header('Authorization', `Bearer ${token}`)
             .json({
                 name: 'Mouse',
-                amount: 15
+                amount: 1
             })
         
         response.assertStatus(201)
@@ -55,7 +55,7 @@ test.group('Products', (group) => {
             .header('Authorization', `Bearer ${token}`)
             .json({
                 name: 'Keyboard',
-                amount: 15
+                amount: 1
             })
 
         const product_id = product.body().data.id
@@ -64,7 +64,7 @@ test.group('Products', (group) => {
             .header('Authorization', `Bearer ${token}`)
             .json({
                 name: 'Mousepad',
-                amount: '16'
+                amount: 2
             })
 
         response.assertStatus(200)
@@ -77,8 +77,8 @@ test.group('Products', (group) => {
         const product = await client.post('/products')
             .header('Authorization', `Bearer ${token}`)
             .json({
-                name: 'Keyboard',
-                amount: 15
+                name: 'Monitor',
+                amount: 1
             })
 
         const product_id = product.body().data.id
