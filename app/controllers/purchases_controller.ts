@@ -4,21 +4,31 @@ import Product from "#models/product"
 import Transaction from "#models/transaction"
 import TransactionProduct from "#models/transaction_product"
 import GatewayService from "#services/gateway_service"
+import { createPurchaseValidator } from '#validators/purchase'
 
 export default class PurchasesController {
     async store({ request, response }: HttpContext) {
-        const { productId, quantity, name, email, cardNumber, cvv } = request.all()
+        const data = await request.validateUsing(createPurchaseValidator)
 
-        const product = await Product.findOrFail(productId)
-        const amount = product.amount * quantity
+        const product = await Product.findOrFail(data.productId)
+        const amount = product.amount * data.quantity
 
-        let client = await Client.findBy('email', email)
+        let client = await Client.findBy('email', data.email)
         if(!client){
-            client = await Client.create({ name, email })
+            client = await Client.create({
+                name: data.name,
+                email: data.email
+            })
         }
 
         const gatewayService = new GatewayService()
-        const result = await gatewayService.charge({ amount, name, email, cardNumber, cvv })
+        const result = await gatewayService.charge({
+            amount: amount,
+            name: data.name,
+            email: data.email,
+            cardNumber: data.cardNumber,
+            cvv: data.cvv
+        })
 
         const transaction = await Transaction.create({
             clientId: client.id,
@@ -26,13 +36,13 @@ export default class PurchasesController {
             externalId: String(result.externalId),
             status: 'approved',
             amount: amount,
-            cardLastNumbers: cardNumber.slice(-4)
+            cardLastNumbers: data.cardNumber.slice(-4)
         })
 
         await TransactionProduct.create({
             transactionId: transaction.id,
             productId: product.id,
-            quantity: quantity
+            quantity: data.quantity
         })
 
         return response.created({
