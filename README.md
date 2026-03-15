@@ -89,23 +89,11 @@ docker compose exec app node ace test
 
 ### Rotas Públicas
 
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| POST | `/login` | Realiza login e retorna um Bearer token |
-| POST | `/register` | Cadastra um novo usuário |
-| POST | `/purchase` | Realiza uma compra informando produto e dados do cartão |
-
-**Body do `/purchase`:**
-```json
-{
-  "productId": 1,
-  "quantity": 2,
-  "name": "Nome do comprador",
-  "email": "comprador@email.com",
-  "cardNumber": "5569000000006063",
-  "cvv": "010"
-}
-```
+| Método | Rota | Body | Descrição |
+|--------|------|------|-----------|
+| POST | `/login` | `{"email": "...", "password": "..."}` | Realiza login e retorna um Bearer token |
+| POST | `/register` | `{"fullName": "...", "email": "...", "password": "...", "passwordConfirmation": "..."}` | Cadastra um novo usuário |
+| POST | `/purchase` | `{"productId": 1, "quantity": 2, "name": "...", "email": "...", "cardNumber": "...", "cvv": "..."}` | Realiza uma compra informando produto e dados do cartão |
 
 ### Rotas Privadas
 
@@ -113,38 +101,38 @@ Todas as rotas abaixo exigem o header `Authorization: Bearer <token>`.
 
 **Usuários**
 
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| GET | `/users` | Lista todos os usuários |
-| POST | `/users` | Cria um novo usuário |
-| GET | `/users/:id` | Detalha um usuário |
-| PUT | `/users/:id` | Atualiza um usuário |
-| DELETE | `/users/:id` | Remove um usuário |
+| Método | Rota | Body | Descrição |
+|--------|------|------|-----------|
+| GET | `/users` | (Vazio) | Lista todos os usuários |
+| POST | `/users` | `{"fullName": "...", "email": "...", "password": "...", "role": "..."}` | Cria um novo usuário |
+| GET | `/users/:id` | (Vazio) | Detalha um usuário |
+| PUT | `/users/:id` | `{"fullName": "...", "email": "...", "role": "..."}` | Atualiza um usuário |
+| DELETE | `/users/:id` | (Vazio) | Remove um usuário |
 
 **Produtos**
 
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| GET | `/products` | Lista todos os produtos |
-| POST | `/products` | Cria um produto |
-| GET | `/products/:id` | Detalha um produto |
-| PUT | `/products/:id` | Atualiza um produto |
-| DELETE | `/products/:id` | Remove um produto |
+| Método | Rota | Body | Descrição |
+|--------|------|------|-----------|
+| GET | `/products` | (Vazio) | Lista todos os produtos |
+| POST | `/products` | `{"name": "...", "amount": 100}` | Cria um produto |
+| GET | `/products/:id` | (Vazio) | Detalha um produto |
+| PUT | `/products/:id` | `{"name": "...", "amount": 100}` | Atualiza um produto |
+| DELETE | `/products/:id` | (Vazio) | Remove um produto |
 
 **Clientes**
 
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| GET | `/clients` | Lista todos os clientes |
-| GET | `/clients/:id` | Detalha um cliente e todas as suas compras |
+| Método | Rota | Body | Descrição |
+|--------|------|------|-----------|
+| GET | `/clients` | (Vazio) | Lista todos os clientes |
+| GET | `/clients/:id` | (Vazio) | Detalha um cliente e todas as suas compras |
 
 **Transações**
 
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| GET | `/transactions` | Lista todas as transações |
-| GET | `/transactions/:id` | Detalha uma transação com produtos |
-| POST | `/transactions/:id/refund` | Solicita reembolso junto ao gateway |
+| Método | Rota | Body | Descrição |
+|--------|------|------|-----------|
+| GET | `/transactions` | (Vazio) | Lista todas as transações |
+| GET | `/transactions/:id` | (Vazio) | Detalha uma transação com produtos |
+| POST | `/transactions/:id/refund` | (Vazio) | Solicita reembolso junto ao gateway |
 
 **Gateways**
 
@@ -153,7 +141,9 @@ Todas as rotas abaixo exigem o header `Authorization: Bearer <token>`.
 | PATCH | `/gateways/:id/active` | `{ "is_active": true }` | Ativa ou desativa um gateway |
 | PATCH | `/gateways/:id/priority` | `{ "priority": 1 }` | Altera a prioridade do gateway |
 
-## Decisões Técnicas e Considerações
+## Considerações e Observações
+
+- **`status` na tabela de transações** — campo adicionado para registrar o estado atual de cada transação (`approved` ou `refunded`), permitindo consultas sem necessidade de chamar o gateway externo.
 
 - **`amount` representa preço, não estoque** — o campo `amount` nos produtos representa o valor unitário em centavos. O total da compra é calculado dinamicamente multiplicando o preço pela quantidade informada.
 
@@ -162,3 +152,11 @@ Todas as rotas abaixo exigem o header `Authorization: Bearer <token>`.
 - **Apenas os 4 últimos dígitos do cartão são armazenados** — decisão de segurança para nunca persistir o número completo do cartão no banco de dados.
 
 - **Controle de acesso por roles** — mesmo não sendo exigido explicitamente no nível 2, operações sensíveis como gerenciamento de gateways e produtos foram restritas ao perfil `admin`, tornando a API mais segura e próxima do que seria esperado em ambiente de produção.
+
+- **Rota `/register`** — mantida do template do AdonisJS como rota auxiliar para facilitar a criação de usuários durante os testes.
+
+## Dificuldades
+
+- Uma das dificuldades que encontrei no projeto foi ter tido pouco contato prévio com a linguagem e as Frameworks. Mesmo com experiência em criação de APIs em outras linguagens, muitos conceitos ou estruturas foram diferentes.
+
+  Devido ao prazo, apliquei conceitos a medida que ia aprendendo. Porém pretendo ir polindo este aprendizado para ter mais controle sobre o projeto e maior aplicação de código limpo e escalável.
