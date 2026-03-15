@@ -13,7 +13,7 @@ const dbConfig = defineConfig({
         port: env.get('DB_PORT'),
         user: env.get('DB_USER'),
         password: env.get('DB_PASSWORD'),
-        database: app.inTest ? env.get('DB_DATABASE') : env.get('DB_DATABASE_TEST'),
+        database: app.inTest ? env.get('DB_DATABASE_TEST') : env.get('DB_DATABASE'),
       },
       migrations: {
         naturalSort: true,
