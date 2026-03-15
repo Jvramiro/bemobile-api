@@ -103,36 +103,36 @@ Todas as rotas abaixo exigem o header `Authorization: Bearer <token>`.
 
 | Método | Rota | Body | Descrição |
 |--------|------|------|-----------|
-| GET | `/users` | (Vazio) | Lista todos os usuários |
+| GET | `/users` || Lista todos os usuários |
 | POST | `/users` | `{"fullName": "...", "email": "...", "password": "...", "role": "..."}` | Cria um novo usuário |
-| GET | `/users/:id` | (Vazio) | Detalha um usuário |
+| GET | `/users/:id` || Detalha um usuário |
 | PUT | `/users/:id` | `{"fullName": "...", "email": "...", "role": "..."}` | Atualiza um usuário |
-| DELETE | `/users/:id` | (Vazio) | Remove um usuário |
+| DELETE | `/users/:id` || Remove um usuário |
 
 **Produtos**
 
 | Método | Rota | Body | Descrição |
 |--------|------|------|-----------|
-| GET | `/products` | (Vazio) | Lista todos os produtos |
+| GET | `/products` || Lista todos os produtos |
 | POST | `/products` | `{"name": "...", "amount": 100}` | Cria um produto |
-| GET | `/products/:id` | (Vazio) | Detalha um produto |
+| GET | `/products/:id` || Detalha um produto |
 | PUT | `/products/:id` | `{"name": "...", "amount": 100}` | Atualiza um produto |
-| DELETE | `/products/:id` | (Vazio) | Remove um produto |
+| DELETE | `/products/:id` || Remove um produto |
 
 **Clientes**
 
 | Método | Rota | Body | Descrição |
 |--------|------|------|-----------|
-| GET | `/clients` | (Vazio) | Lista todos os clientes |
-| GET | `/clients/:id` | (Vazio) | Detalha um cliente e todas as suas compras |
+| GET | `/clients` || Lista todos os clientes |
+| GET | `/clients/:id` || Detalha um cliente e todas as suas compras |
 
 **Transações**
 
 | Método | Rota | Body | Descrição |
 |--------|------|------|-----------|
-| GET | `/transactions` | (Vazio) | Lista todas as transações |
-| GET | `/transactions/:id` | (Vazio) | Detalha uma transação com produtos |
-| POST | `/transactions/:id/refund` | (Vazio) | Solicita reembolso junto ao gateway |
+| GET | `/transactions` || Lista todas as transações |
+| GET | `/transactions/:id` || Detalha uma transação com produtos |
+| POST | `/transactions/:id/refund` || Solicita reembolso junto ao gateway |
 
 **Gateways**
 
