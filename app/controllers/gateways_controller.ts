@@ -3,7 +3,11 @@ import { setGatewayActiveValidator, updateGatewayPriorityValidator } from '#vali
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class GatewaysController {
-    async setActive({ params, request, response }: HttpContext) {
+    async setActive({ params, request, response, auth }: HttpContext) {
+        if (auth.user!.role !== 'admin') {
+            return response.forbidden({ message: 'Access denied' })
+        }
+
         const gateway = await Gateway.findOrFail(params.id)
         const data = await request.validateUsing(setGatewayActiveValidator)
         gateway.isActive = data.is_active
@@ -13,7 +17,11 @@ export default class GatewaysController {
         })
     }
 
-    async updatePriority({ params, request, response }: HttpContext) {
+    async updatePriority({ params, request, response, auth }: HttpContext) {
+        if (auth.user!.role !== 'admin') {
+            return response.forbidden({ message: 'Access denied' })
+        }
+
         const gateway = await Gateway.findOrFail(params.id)
         const data = await request.validateUsing(updateGatewayPriorityValidator)
         gateway.priority = data.priority

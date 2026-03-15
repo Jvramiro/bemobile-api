@@ -4,12 +4,20 @@ import type { HttpContext } from '@adonisjs/core/http'
 import hash from '@adonisjs/core/services/hash'
 
 export default class UsersController {
-    async index({ response }: HttpContext) {
+    async index({ response, auth }: HttpContext) {
+        if (auth.user!.role !== 'admin') {
+            return response.forbidden({ message: 'Access denied' })
+        }
+
         const users = await User.all()
         return response.ok(users)
     }
 
-    async store({ request, response }: HttpContext) {
+    async store({ request, response, auth }: HttpContext) {
+        if (auth.user!.role !== 'admin') {
+            return response.forbidden({ message: 'Access denied' })
+        }
+
         const data = await request.validateUsing(createUserValidator)
         data.password = await hash.make(data.password)
         const user = await User.create(data)
@@ -19,12 +27,20 @@ export default class UsersController {
         })
     }
 
-    async show({ params, response }: HttpContext) {
+    async show({ params, response, auth }: HttpContext) {
+        if (auth.user!.role !== 'admin') {
+            return response.forbidden({ message: 'Access denied' })
+        }
+
         const user = await User.findOrFail(params.id)
         return response.ok(user)
     }
 
-    async update({ params, request, response }: HttpContext) {
+    async update({ params, request, response, auth }: HttpContext) {
+        if (auth.user!.role !== 'admin') {
+            return response.forbidden({ message: 'Access denied' })
+        }
+
         const user = await User.findOrFail(params.id)
         const data = await request.validateUsing(updateUserValidator)
         user.merge(data)
@@ -35,7 +51,11 @@ export default class UsersController {
         })
     }
 
-    async destroy({ params, response }: HttpContext) {
+    async destroy({ params, response, auth }: HttpContext) {
+        if (auth.user!.role !== 'admin') {
+            return response.forbidden({ message: 'Access denied' })
+        }
+
         const user = await User.findOrFail(params.id)
         await user.delete()
         return response.ok({

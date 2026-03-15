@@ -9,7 +9,11 @@ export default class ProductsController {
         return response.ok(products)
     }
 
-    async store({ request, response }: HttpContext) {
+    async store({ request, response, auth }: HttpContext) {
+        if (auth.user!.role !== 'admin') {
+            return response.forbidden({ message: 'Access denied' })
+        }
+
         const data = await request.validateUsing(createProductValidator)
         const product = await Product.create(data)
         return response.created({
@@ -23,7 +27,11 @@ export default class ProductsController {
         return response.ok(product)
     }
 
-    async update({ params, request, response }: HttpContext) {
+    async update({ params, request, response, auth }: HttpContext) {
+        if (auth.user!.role !== 'admin') {
+            return response.forbidden({ message: 'Access denied' })
+        }
+
         const product = await Product.findOrFail(params.id)
         const data = await request.validateUsing(updateProductValidator)
         product.merge(data)
@@ -34,7 +42,11 @@ export default class ProductsController {
         })
     }
 
-    async destroy({ params, response}: HttpContext) {
+    async destroy({ params, response, auth }: HttpContext) {
+        if (auth.user!.role !== 'admin') {
+            return response.forbidden({ message: 'Access denied' })
+        }
+
         const product = await Product.findOrFail(params.id)
         await product.delete()
         return response.ok({

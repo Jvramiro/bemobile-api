@@ -23,7 +23,11 @@ export default class TransactionsController {
         return response.ok(transaction)
     }
 
-    async refund({ params, response }: HttpContext) {
+    async refund({ params, response, auth }: HttpContext) {
+        if (auth.user!.role !== 'admin') {
+            return response.forbidden({ message: 'Access denied' })
+        }
+
         const transaction = await Transaction.query()
             .where('id', params.id)
             .preload('gateway')
